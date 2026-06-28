@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#EAT — Burgers, Pizza Fries & More | Karachi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+:root {
+  --black: #0E0D0B;
+  --char: #1A1916;
+  --ivory: #F5F0E8;
+  --ivory-dim: #DDD8CE;
+  --saffron: #E8952D;
+  --saffron-dark: #C47820;
+  --olive: #5A7A3A;
+  --text-muted: #888079;
+}
+ 
+html { scroll-behavior: smooth; }
+ 
+body {
+  background: var(--black);
+  color: var(--ivory);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+ 
+/* ── NAV ── */
+nav#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 5vw;
+  background: rgba(14,13,11,0.96);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(232,149,45,0.15);
+  transition: padding 0.4s, border-color 0.4s, background 0.4s;
+}
+nav#nav.scrolled {
+  padding: 0.75rem 5vw;
+  background: rgba(14,13,11,0.99);
+  border-bottom: 1px solid rgba(232,149,45,0.28);
+}
+ 
+.nav-logo {
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700; font-size: 1.45rem;
+  color: var(--saffron); text-decoration: none; letter-spacing: 0.06em;
+  transition: opacity 0.2s; flex-shrink: 0;
+}
+.nav-logo:hover { opacity: 0.75; }
+ 
+.nav-links {
+  display: flex; gap: 2rem; list-style: none; align-items: center;
+}
+.nav-links a {
+  color: var(--ivory-dim); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500;
+  letter-spacing: 0.07em; text-transform: uppercase;
+  transition: color 0.25s; position: relative;
+}
+.nav-links a:not(.nav-cta)::after {
+  content: '';
+  position: absolute; bottom: -3px; left: 0; right: 0;
+  height: 1px; background: var(--saffron);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.25s ease;
+}
+.nav-links a:not(.nav-cta):hover { color: var(--saffron); }
+.nav-links a:not(.nav-cta):hover::after { transform: scaleX(1); }
+ 
+.nav-cta {
+  background: var(--saffron) !important;
+  color: var(--black) !important;
+  padding: 0.5rem 1.3rem !important;
+  border-radius: 2px;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  transition: background 0.22s, transform 0.2s !important;
+}
+.nav-cta:hover {
+  background: var(--saffron-dark) !important;
+  transform: translateY(-1px);
+}
+.nav-cta::after { display: none !important; }
+ 
+/* Hamburger */
+.nav-hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.nav-hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--ivory); border-radius: 2px; transition: all 0.28s ease;
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+ 
+/* ── HERO ── */
+.hero {
+  position: relative; height: 100vh; min-height: 640px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(14,13,11,0.25) 0%, rgba(14,13,11,0.5) 50%, rgba(14,13,11,0.95) 100%),
+    url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1800&q=80') center/cover no-repeat;
+  transform: scale(1.06);
+  transition: transform 10s ease-out;
+}
+.hero-bg.loaded { transform: scale(1); }
+.hero-content {
+  position: relative; text-align: center; padding: 0 2rem;
+  animation: fadeUp 1.1s ease both;
+}
+.hero-eyebrow {
+  font-family: 'Courier Prime', monospace; font-size: 0.78rem;
+  color: var(--saffron); letter-spacing: 0.28em; text-transform: uppercase; margin-bottom: 1.2rem;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(5rem, 15vw, 12rem);
+  font-weight: 900; line-height: 0.88; color: var(--ivory); letter-spacing: -0.02em;
+}
+.hero-title .hash { color: var(--saffron); }
+.hero-sub {
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem); color: var(--ivory-dim);
+  margin: 1.8rem auto 2.8rem; max-width: 460px; font-weight: 300; line-height: 1.65;
+}
+.hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--saffron); color: var(--black);
+  padding: 0.9rem 2.4rem; font-family: 'DM Sans', sans-serif;
+  font-weight: 600; font-size: 0.9rem; letter-spacing: 0.04em;
+  border: none; border-radius: 2px; cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: background 0.25s, transform 0.2s;
+}
+.btn-primary:hover { background: var(--saffron-dark); transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent; color: var(--ivory);
+  padding: 0.9rem 2.4rem; font-family: 'DM Sans', sans-serif;
+  font-weight: 500; font-size: 0.9rem; letter-spacing: 0.04em;
+  border: 1px solid rgba(245,240,232,0.3); border-radius: 2px;
+  cursor: pointer; text-decoration: none; display: inline-block;
+  transition: border-color 0.25s;
+}
+.btn-ghost:hover { border-color: var(--ivory); }
+.hero-scroll {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  color: var(--text-muted); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase;
+}
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--saffron), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+ 
+/* ── RATING STRIP ── */
+.rating-strip {
+  background: var(--saffron);
+  display: flex; justify-content: center; gap: 4rem;
+  padding: 1.4rem 5vw; flex-wrap: wrap;
+}
+.rating-item { display: flex; align-items: center; gap: 0.6rem; }
+.rating-num {
+  font-family: 'Playfair Display', serif; font-size: 1.5rem;
+  font-weight: 900; color: var(--black);
+}
+.rating-label { font-size: 0.8rem; color: rgba(14,13,11,0.7); font-weight: 500; }
+ 
+/* ── ABOUT ── */
+.about-strip {
+  background: var(--char); padding: 5.5rem 5vw;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: center;
+}
+.about-label {
+  font-family: 'Courier Prime', monospace; font-size: 0.74rem;
+  color: var(--saffron); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 1rem;
+}
+.about-heading {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3.5vw, 3rem); font-weight: 700; line-height: 1.2;
+  color: var(--ivory); margin-bottom: 1.4rem;
+}
+.about-heading em { font-style: italic; color: var(--saffron); }
+.about-body { color: var(--text-muted); font-size: 0.97rem; line-height: 1.78; font-weight: 300; }
+.about-img { position: relative; border-radius: 3px; overflow: hidden; aspect-ratio: 4/3; }
+.about-img img { width: 100%; height: 100%; object-fit: cover; }
+.about-img-badge {
+  position: absolute; bottom: 1.2rem; left: 1.2rem;
+  background: var(--black); border-left: 3px solid var(--saffron); padding: 0.8rem 1.2rem;
+}
+ 
+/* ── MENU ── */
+.menu-section { padding: 7rem 5vw; background: var(--black); }
+.section-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem;
+}
+.section-tag {
+  font-family: 'Courier Prime', monospace; font-size: 0.74rem;
+  color: var(--saffron); letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 0.5rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700; color: var(--ivory); line-height: 1.1;
+}
+.menu-tabs { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.tab {
+  padding: 0.5rem 1.15rem; border: 1px solid rgba(245,240,232,0.18);
+  border-radius: 2px; background: transparent; color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+  letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.22s;
+}
+.tab.active, .tab:hover { background: var(--saffron); color: var(--black); border-color: var(--saffron); }
+.menu-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.5px; background: rgba(245,240,232,0.06);
+}
+.menu-card {
+  background: var(--char); padding: 1.8rem; cursor: default;
+  transition: background 0.28s; position: relative; overflow: hidden; display: flex; flex-direction: column;
+}
+.menu-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  width: 0; height: 2px; background: var(--saffron); transition: width 0.32s ease;
+}
+.menu-card:hover { background: #201E1A; }
+.menu-card:hover::after { width: 100%; }
+.card-tag {
+  font-family: 'Courier Prime', monospace; font-size: 0.66rem;
+  color: var(--olive); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 0.7rem;
+}
+.card-name {
+  font-family: 'Playfair Display', serif; font-size: 1.2rem;
+  font-weight: 700; color: var(--ivory); margin-bottom: 0.55rem; line-height: 1.3;
+}
+.card-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.62; margin-bottom: 1.3rem; flex: 1; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+.card-price { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; color: var(--saffron); }
+.card-price .orig { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; color: var(--text-muted); text-decoration: line-through; margin-left: 0.3rem; font-weight: 400; }
+.popular-badge {
+  font-family: 'Courier Prime', monospace; font-size: 0.63rem;
+  background: rgba(232,149,45,0.15); color: var(--saffron);
+  border: 1px solid rgba(232,149,45,0.3); padding: 0.2rem 0.55rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+ 
+/* ── FEATURE BAND ── */
+.feature-band {
+  background: var(--saffron); padding: 4rem 5vw;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; text-align: center;
+}
+.feature-icon { font-size: 1.9rem; margin-bottom: 0.9rem; display: block; }
+.feature-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--black); margin-bottom: 0.45rem; }
+.feature-desc { font-size: 0.83rem; color: rgba(14,13,11,0.65); line-height: 1.6; }
+ 
+/* ── SIGNATURE ── */
+.signature-section { padding: 7rem 5vw; background: var(--char); }
+.sig-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 5vw; align-items: start; margin-top: 3.5rem; }
+.sig-img { border-radius: 3px; overflow: hidden; aspect-ratio: 4/3; position: relative; }
+.sig-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.55s ease; }
+.sig-img:hover img { transform: scale(1.04); }
+.sig-img-label {
+  position: absolute; top: 1.1rem; right: 1.1rem;
+  background: var(--saffron); color: var(--black);
+  font-family: 'Courier Prime', monospace; font-size: 0.7rem;
+  font-weight: 700; letter-spacing: 0.1em; padding: 0.38rem 0.75rem; text-transform: uppercase;
+}
+.sig-list { list-style: none; margin-top: 1.5rem; }
+.sig-item {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 1.1rem 0; border-bottom: 1px solid rgba(245,240,232,0.08); gap: 1rem;
+}
+.sig-item:first-child { border-top: 1px solid rgba(245,240,232,0.08); }
+.sig-name { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ivory); }
+.sig-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+.sig-price { font-family: 'Courier Prime', monospace; font-size: 0.95rem; color: var(--saffron); font-weight: 700; white-space: nowrap; }
+ 
+/* ── REVIEWS ── */
+.reviews-section { padding: 7rem 5vw; background: var(--black); }
+.reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.4rem; margin-top: 3.5rem; }
+.review-card {
+  background: var(--char); padding: 1.8rem; border-radius: 2px;
+  border-top: 2px solid var(--saffron); transition: transform 0.28s;
+}
+.review-card:hover { transform: translateY(-4px); }
+.review-stars { color: var(--saffron); font-size: 0.85rem; letter-spacing: 0.08em; margin-bottom: 1rem; }
+.review-text { font-size: 0.9rem; color: var(--ivory-dim); line-height: 1.7; font-style: italic; margin-bottom: 1.4rem; }
+.review-author { font-family: 'Courier Prime', monospace; font-size: 0.74rem; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+.review-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; opacity: 0.7; }
+ 
+/* ── ORDER CTA ── */
+.order-cta {
+  background: var(--char); padding: 7rem 5vw; text-align: center; position: relative; overflow: hidden;
+}
+.order-cta::before {
+  content: '#EAT'; position: absolute; font-family: 'Playfair Display', serif;
+  font-size: 22vw; font-weight: 900; color: rgba(232,149,45,0.04);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  white-space: nowrap; pointer-events: none;
+}
+.order-cta h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 5vw, 3.8rem); font-weight: 700; color: var(--ivory); margin-bottom: 0.9rem; position: relative;
+}
+.order-cta p {
+  color: var(--text-muted); font-size: 0.97rem; max-width: 460px; margin: 0 auto 2.2rem; line-height: 1.7; position: relative;
+}
+.phone-chip {
+  display: inline-flex; align-items: center; gap: 0.7rem;
+  border: 1px solid rgba(232,149,45,0.35); padding: 0.7rem 1.5rem; border-radius: 2px;
+  color: var(--saffron); font-family: 'Courier Prime', monospace; font-size: 1.1rem;
+  margin-bottom: 2rem; position: relative; text-decoration: none; transition: background 0.22s;
+}
+.phone-chip:hover { background: rgba(232,149,45,0.08); }
+.order-platforms { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; position: relative; }
+.platform-btn {
+  padding: 0.7rem 1.6rem; border: 1px solid rgba(245,240,232,0.2); border-radius: 2px;
+  background: transparent; color: var(--ivory-dim); font-size: 0.82rem; font-weight: 500;
+  cursor: pointer; text-decoration: none; display: inline-block; letter-spacing: 0.05em; transition: all 0.22s;
+}
+.platform-btn:hover { border-color: var(--saffron); color: var(--saffron); }
+ 
+/* ── LOCATION ── */
+.location-section {
+  padding: 6rem 5vw; background: var(--black);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center;
+}
+.location-address {
+  font-family: 'Playfair Display', serif; font-size: 1.45rem; color: var(--ivory); line-height: 1.5; margin: 1rem 0 2rem;
+}
+.location-detail {
+  display: flex; align-items: flex-start; gap: 1rem;
+  margin-bottom: 1.2rem; color: var(--text-muted); font-size: 0.88rem; line-height: 1.65;
+}
+.location-detail strong { color: var(--ivory-dim); display: block; margin-bottom: 0.15rem; }
+.loc-icon { font-size: 1.05rem; margin-top: 0.15rem; flex-shrink: 0; }
+.map-wrap { border-radius: 3px; overflow: hidden; aspect-ratio: 4/3; border: 1px solid rgba(245,240,232,0.07); }
+.map-wrap iframe { width: 100%; height: 100%; border: none; display: block; }
+ 
+/* ── FOOTER ── */
+footer {
+  background: var(--char); border-top: 1px solid rgba(245,240,232,0.07);
+  padding: 2.8rem 5vw; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;
+}
+.footer-logo { font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 1.3rem; color: var(--saffron); }
+.footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+.footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.82rem; letter-spacing: 0.05em; transition: color 0.2s; }
+.footer-links a:hover { color: var(--saffron); }
+.footer-copy {
+  color: var(--text-muted); font-size: 0.76rem; width: 100%;
+  margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(245,240,232,0.06);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+}
+ 
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:none; } }
+@keyframes scrollPulse { 0%,100%{opacity:0.35;} 50%{opacity:1;} }
+.reveal { opacity:0; transform:translateY(26px); transition:opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity:1; transform:none; }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+ 
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .about-strip, .sig-grid, .location-section { grid-template-columns: 1fr; }
+  .feature-band { grid-template-columns: 1fr; }
+  .rating-strip { gap: 2rem; }
+  .nav-hamburger { display: flex; }
+  .nav-links {
+    display: flex; flex-direction: column; position: fixed;
+    top: 0; right: 0; bottom: 0; width: 75vw; max-width: 300px;
+    background: rgba(14,13,11,0.99); backdrop-filter: blur(20px);
+    padding: 5rem 2.5rem 2.5rem; gap: 1.8rem;
+    transform: translateX(100%); transition: transform 0.35s ease;
+    border-left: 1px solid rgba(232,149,45,0.15); z-index: 999;
+  }
+  .nav-links.open { transform: translateX(0); }
+  .nav-links a { font-size: 1rem; }
+  .nav-cta { text-align: center; padding: 0.75rem 1.5rem !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg, .reveal { transition: none; }
+}
+</style>
+</head>
+<body>
+ 
+<!-- NAV — single clean navbar, dark from the start -->
+<nav id="nav">
+  <a class="nav-logo" href="#">#EAT</a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#location">Find Us</a></li>
+    <li><a href="tel:+923332430740" class="nav-cta">Order Now</a></li>
+  </ul>
+</nav>
+ 
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Shadman Town · Karachi</p>
+    <h1 class="hero-title"><span class="hash">#</span>EAT</h1>
+    <p class="hero-sub">Pizza Fries, Zingo Burgers, Chowmein & more — made fresh, packed with love, delivered fast.</p>
+    <div class="hero-actions">
+      <a href="#menu" class="btn-primary">See Our Menu</a>
+      <a href="tel:+923332430740" class="btn-ghost">Call to Order</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+ 
+<!-- RATING STRIP -->
+<div class="rating-strip">
+  <div class="rating-item">
+    <span class="rating-num">4.8</span>
+    <span class="rating-label">⭐ Foodpanda Rating<br>100+ Reviews</span>
+  </div>
+  <div class="rating-item">
+    <span class="rating-num">4.9</span>
+    <span class="rating-label">⭐ Google Rating<br>Karachi</span>
+  </div>
+  <div class="rating-item">
+    <span class="rating-num">Rs.299</span>
+    <span class="rating-label">Minimum<br>Order</span>
+  </div>
+</div>
+ 
+<!-- ABOUT -->
+<section class="about-strip" id="about">
+  <div class="reveal">
+    <p class="about-label">Our Story</p>
+    <h2 class="about-heading">Small kitchen,<br><em>big flavours</em></h2>
+    <p class="about-body">
+      Tucked into Shadman Town on Shahrah Noor Jahan, #EAT started with one goal: 
+      make food so good people come back without being told to. Our Pizza Fries went viral 
+      before we had a proper sign. Our Zingo Burgers became a neighbourhood obsession. 
+      And our Chowmein? Regulars say it's the best in the city — and they keep proving it by ordering again.
+    </p>
+  </div>
+  <div class="about-img reveal reveal-delay-1">
+    <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=900&q=80" alt="Food at #EAT Karachi" loading="lazy">
+    <div class="about-img-badge"></div>
+  </div>
+</section>
+ 
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-tag">What We Serve</p>
+      <h2 class="section-title">Our Menu</h2>
+    </div>
+    <div class="menu-tabs">
+      <button class="tab active" onclick="filterMenu('all',this)">All</button>
+      <button class="tab" onclick="filterMenu('pizza-fries',this)">Pizza Fries</button>
+      <button class="tab" onclick="filterMenu('burgers',this)">Burgers</button>
+      <button class="tab" onclick="filterMenu('sandwiches',this)">Sandwiches</button>
+      <button class="tab" onclick="filterMenu('rolls',this)">Rolls</button>
+      <button class="tab" onclick="filterMenu('italian',this)">Italian</button>
+      <button class="tab" onclick="filterMenu('fries',this)">Fries</button>
+      <button class="tab" onclick="filterMenu('steak',this)">Steak</button>
+    </div>
+  </div>
+  <div class="menu-grid reveal" id="menuGrid">
+    <!-- PIZZA FRIES -->
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries · Most Ordered</p>
+      <h3 class="card-name">Pizza Fries</h3>
+      <p class="card-desc">Loaded with pizza sauce, stretchy Mozzarella and tasty Cheddar. The dish that started it all.</p>
+      <div class="card-footer"><div class="card-price">Rs. 315 <span class="orig">350</span></div><span class="popular-badge">Popular</span></div>
+    </div>
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries</p>
+      <h3 class="card-name">Chicken Pizza Fries</h3>
+      <p class="card-desc">Pizza sauce, onions, fajita flavoured chicken, cheese, green pepper and olives.</p>
+      <div class="card-footer"><div class="card-price">Rs. 405 <span class="orig">450</span></div><span class="popular-badge">Popular</span></div>
+    </div>
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries</p>
+      <h3 class="card-name">Boti Pizza Fries</h3>
+      <p class="card-desc">Crispy fries topped with melted cheese, savory boti sauce and flavorful toppings, baked to perfection.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries</p>
+      <h3 class="card-name">Smokie Pizza Fries</h3>
+      <p class="card-desc">Crispy fries topped with melted cheese, smoky sauce and flavourful toppings, baked to perfection.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries</p>
+      <h3 class="card-name">Mustard Pizza Fries</h3>
+      <p class="card-desc">Fries topped with our house pizza sauce and a bold mustard kick.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries</p>
+      <h3 class="card-name">Zinger Pizza Fries</h3>
+      <p class="card-desc">Crispy fries topped with zesty pizza sauce, melted cheese, and zinger seasonings.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries</p>
+      <h3 class="card-name">Double Cheese Pizza Fries</h3>
+      <p class="card-desc">Crispy fries topped with an extra layer of melted cheese and savoury pizza flavours. The indulgent option.</p>
+      <div class="card-footer"><div class="card-price">Rs. 540 <span class="orig">600</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="pizza-fries">
+      <p class="card-tag">Pizza Fries</p>
+      <h3 class="card-name">Mushroom Pizza Fries</h3>
+      <p class="card-desc">Earthy mushrooms on crispy fries with pizza sauce and melted cheese. A veggie crowd-pleaser.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <!-- BURGERS -->
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Signature Burger · Most Ordered</p>
+      <h3 class="card-name">Zingo Fire Jumbo Burger</h3>
+      <p class="card-desc">Chicken thigh with dynamite sauce, mayo garlic sauce, jalapeño, pickle, iceberg and cheese. Our biggest, boldest burger.</p>
+      <div class="card-footer"><div class="card-price">Rs. 540 <span class="orig">600</span></div><span class="popular-badge">Popular</span></div>
+    </div>
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Signature Burger · Most Ordered</p>
+      <h3 class="card-name">Zingo Dynamite Burger</h3>
+      <p class="card-desc">Classic signature crispy chicken burger made with our house dynamite sauce. The one that made us famous.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div><span class="popular-badge">Popular</span></div>
+    </div>
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Signature Burger · Most Ordered</p>
+      <h3 class="card-name">Zingo Smokey Burger</h3>
+      <p class="card-desc">A burst of exquisite flavour and crunch. The complete burger experience — smoky, crispy, satisfying.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div><span class="popular-badge">Popular</span></div>
+    </div>
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Burger</p>
+      <h3 class="card-name">Zingo Mayo Jumbo Burger</h3>
+      <p class="card-desc">Double zinger with our signature mayo garlic sauce and fresh iceberg. Rich and satisfying.</p>
+      <div class="card-footer"><div class="card-price">Rs. 540 <span class="orig">600</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Burger</p>
+      <h3 class="card-name">Zingo Mayo Burger</h3>
+      <p class="card-desc">Crispy chicken fillet with iceberg and our beloved mayo garlic sauce. Simple, clean, delicious.</p>
+      <div class="card-footer"><div class="card-price">Rs. 405 <span class="orig">450</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Burger</p>
+      <h3 class="card-name">Zingo Spicy Mustard Burger</h3>
+      <p class="card-desc">Simple, elegant and just delicious beyond words. A mustard twist on our zingo classic.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Burger</p>
+      <h3 class="card-name">Chicken Grill Burger</h3>
+      <p class="card-desc">Juicy grilled chicken patty for those who prefer a lighter, flame-cooked option.</p>
+      <div class="card-footer"><div class="card-price">Rs. 405 <span class="orig">450</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="burgers">
+      <p class="card-tag">Burger</p>
+      <h3 class="card-name">Anda Shami Burger</h3>
+      <p class="card-desc">A classic Karachi-style shami burger with egg — the affordable, comforting choice.</p>
+      <div class="card-footer"><div class="card-price">Rs. 135 <span class="orig">150</span></div></div>
+    </div>
+    <!-- SANDWICHES -->
+    <div class="menu-card" data-cat="sandwiches">
+      <p class="card-tag">Sandwich</p>
+      <h3 class="card-name">Club Chicken Sandwich</h3>
+      <p class="card-desc">Classic club sandwich layered with egg, grilled chicken and turkey bacon. Served with herb fries.</p>
+      <div class="card-footer"><div class="card-price">Rs. 405 <span class="orig">450</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="sandwiches">
+      <p class="card-tag">Sandwich</p>
+      <h3 class="card-name">Club Chicken Mustard Cheese</h3>
+      <p class="card-desc">Fluffy egg omelette and chicken chunks enclosed in bread with mayo, mustard and ketchup.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="sandwiches">
+      <p class="card-tag">Sandwich</p>
+      <h3 class="card-name">ZingoWich Sandwich</h3>
+      <p class="card-desc">Chicken thigh, iceberg, jalapeño, pickle, dynamite sauce, mayo garlic sauce & cheese. The full Zingo experience in a sandwich.</p>
+      <div class="card-footer"><div class="card-price">Rs. 585 <span class="orig">650</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="sandwiches">
+      <p class="card-tag">Sandwich</p>
+      <h3 class="card-name">Crispy Chicken Cheese Club</h3>
+      <p class="card-desc">Crispy chicken fillet with egg and cheese in a club-style build. Rich and filling.</p>
+      <div class="card-footer"><div class="card-price">Rs. 585 <span class="orig">650</span></div></div>
+    </div>
+    <!-- ROLLS -->
+    <div class="menu-card" data-cat="rolls">
+      <p class="card-tag">Roll</p>
+      <h3 class="card-name">Twister Roll</h3>
+      <p class="card-desc">Iceberg, cabbage, chilli garlic sauce and dynamite sauce wrapped and twisted.</p>
+      <div class="card-footer"><div class="card-price">Rs. 315 <span class="orig">350</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="rolls">
+      <p class="card-tag">Roll</p>
+      <h3 class="card-name">Twister Cheese Roll</h3>
+      <p class="card-desc">The classic Twister made crispier and crunchier, with added cheese for an indulgent pull.</p>
+      <div class="card-footer"><div class="card-price">Rs. 360 <span class="orig">400</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="rolls">
+      <p class="card-tag">Roll</p>
+      <h3 class="card-name">Egg Roll</h3>
+      <p class="card-desc">The classic roll — crispy, crunchy and always satisfying. The simplest thing we do, done right.</p>
+      <div class="card-footer"><div class="card-price">Rs. 225 <span class="orig">250</span></div></div>
+    </div>
+    <!-- ITALIAN -->
+    <div class="menu-card" data-cat="italian">
+      <p class="card-tag">Italian · Most Ordered</p>
+      <h3 class="card-name">Alfredo Penne Pasta</h3>
+      <p class="card-desc">Creamy pasta dish with penne, rich Alfredo sauce, and a blend of cheeses. Comfort in a bowl.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div><span class="popular-badge">Popular</span></div>
+    </div>
+    <div class="menu-card" data-cat="italian">
+      <p class="card-tag">Italian</p>
+      <h3 class="card-name">Mac & Cheese Pasta</h3>
+      <p class="card-desc">Chicken coated in our Alfredo sauce, served with garlic bread. The ultimate mac-and-cheese upgrade.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="italian">
+      <p class="card-tag">Italian</p>
+      <h3 class="card-name">Chicken Mac & Cheese Pasta</h3>
+      <p class="card-desc">Penne pasta cooked in our Alfredo sauce, served with grilled chicken and garlic bread. The full package.</p>
+      <div class="card-footer"><div class="card-price">Rs. 585 <span class="orig">650</span></div></div>
+    </div>
+    <!-- FRIES -->
+    <div class="menu-card" data-cat="fries">
+      <p class="card-tag">Fries</p>
+      <h3 class="card-name">Mayo Garlic Fries</h3>
+      <p class="card-desc">Golden fries drizzled with our signature mayo garlic sauce. The side that steals the show.</p>
+      <div class="card-footer"><div class="card-price">Rs. 225 <span class="orig">250</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="fries">
+      <p class="card-tag">Fries</p>
+      <h3 class="card-name">Plain Fries</h3>
+      <p class="card-desc">Batter-coated, crisp, golden fries. Exactly as fries should be — nothing more, nothing less.</p>
+      <div class="card-footer"><div class="card-price">Rs. 180 <span class="orig">200</span></div></div>
+    </div>
+    <div class="menu-card" data-cat="fries">
+      <p class="card-tag">Fries · Full Box</p>
+      <h3 class="card-name">Chat Pata Masala Fries</h3>
+      <p class="card-desc">A full box of fries tossed in our tangy, spiced chaat masala blend. Addictive from the first bite.</p>
+      <div class="card-footer"><div class="card-price">Rs. 450 <span class="orig">500</span></div></div>
+    </div>
+    <!-- STEAK -->
+    <div class="menu-card" data-cat="steak">
+      <p class="card-tag">Steak · Single Serving</p>
+      <h3 class="card-name">Special Chicken Steak</h3>
+      <p class="card-desc">Thyme-flavoured chicken steak finished with cheese. A cut above the usual fast-food fare.</p>
+      <div class="card-footer"><div class="card-price">Rs. 900 <span class="orig">1,000</span></div></div>
+    </div>
+  </div>
+</section>
+ 
+<!-- FEATURE BAND -->
+<div class="feature-band reveal">
+  <div>
+    <span class="feature-icon">🍟</span>
+    <div class="feature-title">Signature Pizza Fries</div>
+    <div class="feature-desc">8 varieties of our viral pizza fries — the dish Karachi couldn't stop talking about.</div>
+  </div>
+  <div>
+    <span class="feature-icon">🍔</span>
+    <div class="feature-title">Zingo Burger Line</div>
+    <div class="feature-desc">8 handcrafted burgers built around our proprietary Zingo crispy fillet and house sauces.</div>
+  </div>
+  <div>
+    <span class="feature-icon">📦</span>
+    <div class="feature-title">Neat Clean Packaging</div>
+    <div class="feature-desc">Every order packed to arrive hot, fresh and exactly as it left our kitchen.</div>
+  </div>
+</div>
+ 
+<!-- SIGNATURE -->
+<section class="signature-section" id="signature">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-tag">Customer Favourites</p>
+      <h2 class="section-title">Most Ordered</h2>
+    </div>
+  </div>
+  <div class="sig-grid">
+    <div class="sig-img reveal">
+      <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=900&q=80" alt="Most ordered dishes at #EAT" loading="lazy">
+      <div class="sig-img-label">⭐ Fan Picks</div>
+    </div>
+    <div class="reveal reveal-delay-1">
+      <p class="about-label">Order These First</p>
+      <h3 class="about-heading" style="font-size:1.9rem;margin-bottom:0.5rem;">The ones our regulars<br>never skip</h3>
+      <p class="about-body">These are the dishes that built #EAT's reputation — ordered again and again by the people who know us best.</p>
+      <ul class="sig-list">
+        <li class="sig-item"><div><div class="sig-name">Pizza Fries</div><div class="sig-sub">Mozzarella & Cheddar loaded</div></div><span class="sig-price">Rs. 315</span></li>
+        <li class="sig-item"><div><div class="sig-name">Zingo Fire Jumbo Burger</div><div class="sig-sub">Chicken thigh · dynamite · jalapeño</div></div><span class="sig-price">Rs. 540</span></li>
+        <li class="sig-item"><div><div class="sig-name">Zingo Dynamite Burger</div><div class="sig-sub">Signature crispy classic</div></div><span class="sig-price">Rs. 450</span></li>
+        <li class="sig-item"><div><div class="sig-name">Alfredo Penne Pasta</div><div class="sig-sub">Creamy · cheesy · satisfying</div></div><span class="sig-price">Rs. 450</span></li>
+        <li class="sig-item"><div><div class="sig-name">Chicken Pizza Fries</div><div class="sig-sub">Fajita chicken · olives · green pepper</div></div><span class="sig-price">Rs. 405</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+ 
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviews">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-tag">What Karachi Says</p>
+      <h2 class="section-title">Real Reviews</h2>
+    </div>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal"><div class="review-stars">★★★★★</div><p class="review-text">"Best chowmein ever!! Same for Kung Pao chicken. Both absolutely outstanding."</p><div class="review-author">Usman</div><div class="review-date">March 2026 · Foodpanda</div></div>
+    <div class="review-card reveal reveal-delay-1"><div class="review-stars">★★★★★</div><p class="review-text">"Since I've tried your Singaporean rice, I never order it from anywhere else."</p><div class="review-author">Sarwat</div><div class="review-date">June 2026 · Foodpanda</div></div>
+    <div class="review-card reveal reveal-delay-2"><div class="review-stars">★★★★★</div><p class="review-text">"The chowmein was the best thing I've had in a while, not gonna lie."</p><div class="review-author">Kiran</div><div class="review-date">January 2026 · Foodpanda</div></div>
+    <div class="review-card reveal"><div class="review-stars">★★★★★</div><p class="review-text">"Ordered the anda shami burger and chicken chowmein — both were awesome. 100/100."</p><div class="review-author">Ayesha</div><div class="review-date">March 2026 · Foodpanda</div></div>
+    <div class="review-card reveal reveal-delay-1"><div class="review-stars">★★★★★</div><p class="review-text">"Hot, fresh and tasty! The finest burger — the chutney with garlic, coriander and chilli sauce is superb."</p><div class="review-author">Has</div><div class="review-date">April 2026 · Foodpanda</div></div>
+    <div class="review-card reveal reveal-delay-2"><div class="review-stars">★★★★★</div><p class="review-text">"The taste and quantity are all perfect. Neat and clean packaging. We will surely order again."</p><div class="review-author">Verified Customer</div><div class="review-date">Google Review</div></div>
+  </div>
+</section>
+ 
+<!-- ORDER CTA -->
+<section class="order-cta">
+  <h2 class="reveal">Hungry? <em>Let's fix that.</em></h2>
+  <p class="reveal">Order directly by phone or through your favourite delivery platform. We're ready.</p>
+  <div class="reveal"><a href="tel:+923332430740" class="phone-chip">📞 +92 333 2430740</a></div>
+  <div class="reveal"><a href="tel:+923332430740" class="btn-primary" style="font-size:1rem;padding:1rem 3rem;">Call to Order</a></div>
+  <div class="order-platforms reveal"><a href="tel:+923332430740" class="platform-btn">Direct Call</a></div>
+</section>
+ 
+<!-- LOCATION -->
+<section class="location-section" id="location">
+  <div class="reveal">
+    <p class="about-label">Find Us</p>
+    <h2 class="about-heading" style="font-size:2.1rem;">Come find us<br>or we come to you</h2>
+    <div class="location-address">House No. 440, Sector 14-A,<br>Shadman Town,<br>Karachi — 74200</div>
+    <div class="location-detail"><span class="loc-icon">📞</span><div><strong>Phone</strong>+92 333 2430740</div></div>
+    <div class="location-detail"><span class="loc-icon">🛵</span><div><strong>Delivery</strong>Available in Karachi</div></div>
+    <div class="location-detail"><span class="loc-icon">⭐</span><div><strong>Ratings</strong>4.8 on Foodpanda · 4.9 on Google Maps</div></div>
+    <div class="location-detail"><span class="loc-icon">💰</span><div><strong>Deals</strong>Currently no deals are available</div></div>
+  </div>
+  <div class="map-wrap reveal reveal-delay-1">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d900!2d67.0528332!3d24.9620831!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3eb34100567325c1%3A0xafa3f10b05140c32!2s%23EAT!5e0!3m2!1sen!2spk!4v1700000000000"
+      allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="#EAT Location on Google Maps">
+    </iframe>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">#EAT</div>
+  <nav class="footer-links">
+    <a href="#menu">Menu</a>
+    <a href="#about">About</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#location">Location</a>
+    <a href="tel:+923332430740">+92 333 2430740</a>
+  </nav>
+  <div class="footer-copy">
+    <span>© 2026 #EAT, Karachi. All rights reserved.</span>
+    <span style="color:var(--saffron);">House 440, Sector 14-A, Shadman Town</span>
+  </div>
+</footer>
+ 
+<script>
+  // ── Scroll: add .scrolled class to nav
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+ 
+  // ── Hero background zoom-in on load
+  const heroBg = document.getElementById('heroBg');
+  if (heroBg) setTimeout(() => heroBg.classList.add('loaded'), 100);
+ 
+  // ── Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+ 
+  // ── Menu filter
+  function filterMenu(cat, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.menu-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'flex' : 'none';
+    });
+  }
+ 
+  // ── Hamburger toggle
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    const open = hamburger.classList.toggle('open');
+    navLinks.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navLinks.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+</body>
+</html>
+ 
